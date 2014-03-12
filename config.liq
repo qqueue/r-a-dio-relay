@@ -14,17 +14,16 @@ set("log.file", true)
 set("log.file.path", "./<script>.log")
 
 # Original stream URL
-STREAM_URL = "http://stream.r-a-d.io:1130/main.mp3"
+STREAM_URL = "http://r-a-d.io/main.mp3"
 
 # Icecast mountpoint/stream settings
 ICECAST_HOST = "127.0.0.1"
 ICECAST_PORT = 8000
-ICECAST_PASSWORD = "donthackme"
+ICECAST_PASSWORD = "hackme"
 ICECAST_USERNAME = "source" #default is "source"
-ICECAST_MOUNT = "/r-a-dio"
 ICECAST_PUBLIC = false
-ICECAST_DESCRIPTION = "r/a/dio mobile aac+ stream"
-ICECAST_NAME = "r/a/dio mobile"
+ICECAST_DESCRIPTION = "r/a/dio opus relay"
+ICECAST_NAME = "r/a/dio opus"
 ICECAST_GENRE = "Various"
 
 # Stream fallback (yet to be solved properly)

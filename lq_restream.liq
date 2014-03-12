@@ -1,36 +1,16 @@
 #!/usr/bin/env liquidsoap
-
-######################################################
-# Liquidsoap script for r/a/dio aac+ stream relay
-# by Icedream
-#
-# Read LICENSE.txt for information about the license.
-######################################################
+# Liquidsoap script for opus stream relay
 
 %include "config.liq"
-%include "lib/audio_processing.liq"
-%include "lib/metadata_fix.liq"
-
-# TODO: Make this a working daemon.
-
-####################
-# CORE SCRIPT
-####################
-
 # Relay original stream
 radio = input.http(
-	user_agent="Icedream/MobileStreamServer",
 	timeout=30.,
 	poll_delay=.5,
 	new_track_on_metadata=true,
-	force_mime="audio/mpeg",
 	buffer=.5,
-	id="original",
+	id="original-r-a-dio",
 	STREAM_URL
 )
-
-# Fix metadata
-radio = map_metadata(fixmeta, radio)
 
 # Fallback if stream goes offline
 #fb = single(FALLBACK_PATH)
@@ -40,20 +20,36 @@ fb = rewrite_metadata([
 	("artist", "r/a/dio")
 ], fb)
 
-# For the weird clips on the original stream
-radio = ladspa.declip(id="fx_declip", radio)
-
 # Fallback to offline audio file
 radio = fallback(id="fb_fallback2", track_sensitive=false, [radio, fb])
 
 # Make stream safe for shout
 radio = mksafe(radio)
 
-#####################
-# ACTUAL STREAMING
-#####################
+# Relay original stream
+eden = input.http(
+	timeout=30.,
+	poll_delay=.5,
+	new_track_on_metadata=true,
+	buffer=.5,
+	id="original-eden",
+  "http://edenofthewest.com:8080/eden.mp3"
+)
 
-# Default settings
+# Fallback if stream goes offline
+#fb = single(FALLBACK_PATH)
+fbe = amplify(.1, noise())
+fbe = rewrite_metadata([
+	("title", "eden Stream down at the moment, stay tuned on edenofthewest.com!"),
+	("artist", "edenofthewest")
+], fbe)
+
+# Fallback to offline audio file
+eden = fallback(id="fb_fallback3", track_sensitive=false, [eden, fbe])
+
+# Make stream safe for shout
+eden = mksafe(eden)
+
 shout = output.icecast(
 	password=ICECAST_PASSWORD,
 	description=ICECAST_DESCRIPTION,
@@ -65,14 +61,23 @@ shout = output.icecast(
 	host=ICECAST_HOST
 )
 
-# Stream as aac+
-shout(
-	mount=ICECAST_MOUNT ^ "/aacp",
-	%aacplus(bitrate=56), radio
+edenshout = output.icecast(
+	password=ICECAST_PASSWORD,
+	description="edenofthewest opus relay",
+	name= "edenofthewest",
+	genre="Various",
+	public=ICECAST_PUBLIC,
+	user=ICECAST_USERNAME,
+	port=ICECAST_PORT,
+	host=ICECAST_HOST
 )
 
-# Stream as opus
 shout(
-	mount=ICECAST_MOUNT ^ "/opus",
-	%opus(bitrate=32), radio
+	mount="/r-a-dio",
+	%opus(bitrate=64,vbr="unconstrained"), radio
+)
+
+edenshout(
+	mount="/edenofthewest",
+	%opus(bitrate=64,vbr="unconstrained"), eden
 )
