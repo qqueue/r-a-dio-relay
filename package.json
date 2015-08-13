@@ -1,0 +1,20 @@
+{
+  "name": "r-a-dio-relay",
+  "description": "r/a/dio restreamer as opus, node version",
+  "version": "1.0.0",
+  "main": "relay.js",
+  "dependencies": {
+    "icy": "^2.0.0",
+    "lame": "^1.2.2",
+    "node-opus": "^0.1.10",
+    "vorbis": "^0.1.1",
+    "ogg": "^1.2.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@queue-github:qqueue/r-a-dio-relay.git"
+  },
+  "author": "queue",
+  "license": "WTFPL"
+}
