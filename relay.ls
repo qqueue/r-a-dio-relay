@@ -75,8 +75,7 @@ http.create-server (req, res) ->
         mpg321?kill!
         get?abort!
         console.error \closed!
-    get.on \error err
-
+  get.on \error err
 .listen process.argv[2], !->
   console.error "listening on #{process.argv[2]}"
 

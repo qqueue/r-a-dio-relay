@@ -26,7 +26,7 @@ http.createServer(function(req, res){
       console.error(e);
     }
   };
-  return get = https.get({
+  get = https.get({
     host: 'stream.r-a-d.io',
     path: '/main.mp3',
     headers: {
@@ -71,7 +71,8 @@ http.createServer(function(req, res){
       }
       console.error('closed!');
     });
-  }, get.on('error', err));
+  });
+  return get.on('error', err);
 }).listen(process.argv[2], function(){
   console.error("listening on " + process.argv[2]);
 });
