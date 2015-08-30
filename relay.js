@@ -48,7 +48,7 @@ http.createServer(function(req, res){
     mpg321.stderr.pipe(process.stderr);
     mpg321.on('error', err);
     i.pipe(mpg321.stdin);
-    oggenc = cp.spawn('oggenc', ['-Q', '-r', '-R', '32000', '-b', '48', '-']);
+    oggenc = cp.spawn('oggenc', ['-Q', '-r', '-b', '48', '-']);
     oggenc.stderr.pipe(process.stderr);
     oggenc.on('error', err);
     mpg321.stdout.pipe(oggenc.stdin);
